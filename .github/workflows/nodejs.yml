@@ -86,6 +86,7 @@ jobs:
           npm run lint
 
   npm-audit:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -107,6 +108,7 @@ jobs:
         continue-on-error: true
 
   npm-outdated:
+    needs: build
     runs-on: ubuntu-latest
     if: "github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/release')"
     steps:
@@ -128,6 +130,7 @@ jobs:
           npm outdated --omit=dev
 
   njsscan:
+    needs: build
     runs-on: ubuntu-latest
     container: python:3
     steps:
