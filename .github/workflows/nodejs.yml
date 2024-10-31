@@ -2,17 +2,17 @@ name: Node.js CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - "*"
-    tags:
-      - "*"
+    branches: ["*"]
+    tags: ["*"]
   pull_request:
     types: [opened, synchronize, reopened]
 
+env:
+  NODE_PROJECT_DIR: citrineos-core
+  NODE_VERSION: '18'
+
 jobs:
   build:
-    env:
-      NODE_PROJECT_DIR: citrineos-core
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     steps:
@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache node modules
         id: cache-nodemodules
@@ -32,7 +32,6 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          # caching node_modules
           path: ${{ env.NODE_PROJECT_DIR }}/node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('citrineos-core/package.json') }}
           restore-keys: |
@@ -41,14 +40,12 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install dependencies
-        run: |
-          cd ${{ env.NODE_PROJECT_DIR }}
-          npm run install-all
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm run install-all
 
       - name: Build
-        run: |
-          cd ${{ env.NODE_PROJECT_DIR }}
-          npm run build
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm run build
 
       - name: Upload Build Artifacts
         if: always()
@@ -58,8 +55,6 @@ jobs:
           path: ${{ env.NODE_PROJECT_DIR }}/dist
 
   unit-test:
-    env:
-      NODE_PROJECT_DIR: citrineos-core
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -71,7 +66,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache node modules
         id: cache-nodemodules
@@ -79,23 +74,20 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          # caching node_modules
           path: ${{ env.NODE_PROJECT_DIR }}/node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('citrineos-core/package.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-  
+
       - name: Install dependencies
-        run: |
-          cd ${{ env.NODE_PROJECT_DIR }}
-          npm run install-all
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm run install-all
 
       - name: Run Unit Tests
-        run: |
-          cd ${{ env.NODE_PROJECT_DIR }}
-          npm test
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm test
 
   # lint:
   #   needs: build
