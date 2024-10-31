@@ -1,6 +1,9 @@
 include:
   - component: $CI_SERVER_FQDN/base-ci-components/base/gitlab-ci-base@main
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 stages:
 - build
 - test
