@@ -1,0 +1,155 @@
+workflow:
+  rules:
+    # prevent branch pipeline when an MR is open (prefer MR pipeline)
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*tag(,[^],]*)*\]/" && $CI_COMMIT_TAG'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*branch(,[^],]*)*\]/" && $CI_COMMIT_BRANCH'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*mr(,[^],]*)*\]/" && $CI_MERGE_REQUEST_ID'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*default(,[^],]*)*\]/" && $CI_COMMIT_REF_NAME =~ $CI_DEFAULT_BRANCH'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*prod(,[^],]*)*\]/" && $CI_COMMIT_REF_NAME =~ $PROD_REF'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*integ(,[^],]*)*\]/" && $CI_COMMIT_REF_NAME =~ $INTEG_REF'
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*dev(,[^],]*)*\]/" && $CI_COMMIT_REF_NAME !~ $PROD_REF && $CI_COMMIT_REF_NAME !~ $INTEG_REF'
+      when: never
+    - when: always
+
+.test-policy:
+  rules:
+    # on tag: auto & failing
+    - if: $CI_COMMIT_TAG
+    # on ADAPTIVE_PIPELINE_DISABLED: auto & failing
+    - if: '$ADAPTIVE_PIPELINE_DISABLED == "true"'
+    # on production or integration branch(es): auto & failing
+    - if: '$CI_COMMIT_REF_NAME =~ $PROD_REF || $CI_COMMIT_REF_NAME =~ $INTEG_REF'
+    # early stage (dev branch, no MR): manual & non-failing
+    - if: '$CI_MERGE_REQUEST_ID == null && $CI_OPEN_MERGE_REQUESTS == null'
+      when: manual
+      allow_failure: true
+    # Draft MR: auto & non-failing
+    - if: '$CI_MERGE_REQUEST_TITLE =~ /^Draft:.*/'
+      allow_failure: true
+    # else (Ready MR): auto & failing
+    - when: on_success
+
+variables:
+  # nodejs-base
+  NODE_IMAGE: node:18
+  NODE_PROJECT_DIR: citrineos-core
+  # # Node.js build
+  NODE_BUILD_DIR: dist
+  # Keep this following varibles constant among all the templates
+  # default production ref name (pattern)
+  PROD_REF: /^release/
+  # default integration ref name (pattern)
+  INTEG_REF: /^(master|main)$/
+
+########################################################################################################################
+# Stages definition
+########################################################################################################################
+stages:
+  - build
+  - test
+  - package-build
+  - package-test
+  - infra
+  - deploy
+  - acceptance
+  - publish
+  - infra-prod
+  - production
+
+########################################################################################################################
+# Node Base definition
+########################################################################################################################
+.nodejs-base:
+  before_script:
+    - cd ${NODE_PROJECT_DIR}
+    - npm run install-all
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-node"
+    paths:
+      - $NODE_PROJECT_DIR/.npm/
+      - $NODE_PROJECT_DIR/node_modules/
+  image: $NODE_IMAGE
+  variables:
+    # NPM cache
+    npm_config_cache: "$CI_PROJECT_DIR/$NODE_PROJECT_DIR/.npm"
+
+########################################################################################################################
+# Build Stage Definition: Build (when applicable), unit test (with code coverage), and package the code
+########################################################################################################################
+Node.js build:
+  artifacts:
+    when: always
+    name: "$CI_JOB_NAME artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
+    paths:
+      - $NODE_PROJECT_DIR/$NODE_BUILD_DIR
+    expire_in: 1 day
+  extends: .nodejs-base
+  rules:
+    - !reference [.test-policy, rules]
+  script:
+    - npm run build
+  stage: build
+
+Node.js Unit Testing:
+  extends: .nodejs-base
+  rules:
+    - !reference [.test-policy, rules]
+  script:
+    - npm run build
+  stage: build
+
+Node.js lint:
+  extends: .nodejs-base
+  rules:
+    - !reference [.test-policy, rules]
+  script:
+    - npm run lint
+  stage: build
+
+# ########################################################################################################################
+# # Test Stage Definition: Perform code anaysis jobs (code quality, Static Application Security Testing, dependency check, license check, ...)
+# ########################################################################################################################
+npm audit:
+  allow_failure: true
+  extends: .nodejs-base
+  rules:
+    - !reference [.test-policy, rules]
+  script:
+    - npm audit --audit-level=low
+  stage: test
+
+npm outdated:
+  artifacts:
+    when: always
+    name: "$CI_JOB_NAME artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
+    paths:
+      - $NODE_PROJECT_DIR/reports/npm-outdated.*
+    expire_in: 1 day
+  extends: .nodejs-base
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ $PROD_REF || $CI_COMMIT_REF_NAME =~ $INTEG_REF'
+      allow_failure: true
+    - when: manual
+      allow_failure: true
+  script:
+    - npm outdated ---omit=dev
+  stage: test
+
+njsscan:
+  before_script:
+    - pip3 install --upgrade njsscan
+    - cd ${NODE_PROJECT_DIR}
+  image: python
+  rules:
+    - !reference [.test-policy, rules]
+  script:
+    - njsscan .
+  stage: test

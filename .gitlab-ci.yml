@@ -1,11 +1,12 @@
 include:
   - component: $CI_SERVER_FQDN/base-ci-components/base/gitlab-ci-base@main
+  - .gitlab/ci/node.gitlab-ci.yml
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  PROD_REF: /^(main)/
-  INTEG_REF: /^(development)$/
-  
+  PROD_REF: /^(release)/
+  INTEG_REF: /^(main|development)$/
+
 stages:
 - build
 - test
