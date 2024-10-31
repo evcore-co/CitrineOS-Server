@@ -17,7 +17,7 @@ jobs:
       NODE_PROJECT_DIR: citrineos-core
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -52,7 +52,7 @@ jobs:
 
       - name: Upload Build Artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: node-build-artifacts
           path: ${{ env.NODE_PROJECT_DIR }}/dist
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
