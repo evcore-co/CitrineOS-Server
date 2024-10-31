@@ -32,37 +32,36 @@ jobs:
           cd $NODE_PROJECT_DIR
           npm run install-all
 
-      # - name: Build
-      #   run: |
-      #     cd $NODE_PROJECT_DIR
-      #     npm run build
+      - name: Build
+        run: |
+          cd $NODE_PROJECT_DIR
+          npm run build
 
-      # - name: Upload Build Artifacts
-      #   if: always()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: node-build-artifacts
-      #     path: ${{ env.NODE_PROJECT_DIR }}/dist
+      - name: Upload Build Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: node-build-artifacts
+          path: ${{ env.NODE_PROJECT_DIR }}/dist
 
-  # unit-test:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         submodules: true
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
 
-  #     - name: Set up Node.js ${{ env.NODE_IMAGE }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18'
-  #         cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-  #     - name: Run Unit Tests
-  #       run: |
-  #         cd citrineos-core
-  #         npm test
+      - name: Run Unit Tests
+        run: |
+          cd citrineos-core
+          npm test
 
   # lint:
   #   needs: build
