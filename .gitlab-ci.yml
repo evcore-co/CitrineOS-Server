@@ -3,7 +3,9 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-
+  PROD_REF: /^(main)/
+  INTEG_REF: /^(development)$/
+  
 stages:
 - build
 - test
