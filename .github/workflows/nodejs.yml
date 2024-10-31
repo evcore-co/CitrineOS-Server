@@ -89,25 +89,41 @@ jobs:
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm test
 
-  # lint:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         submodules: true
+  lint:
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18'
-  #         cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-  #     - name: Lint Code
-  #       run: |
-  #         cd citrineos-core
-  #         npm run lint
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.NODE_PROJECT_DIR }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('citrineos-core/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm run install-all
+
+      - name: Lint
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm run lint
+
 
   # npm-audit:
   #   needs: build
