@@ -67,6 +67,25 @@ jobs:
         with:
           submodules: true
 
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          # caching node_modules
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('citrineos-core/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+  
+      - name: Install dependencies
+        run: |
+          cd $NODE_PROJECT_DIR
+          npm run install-all
+
       - name: Run Unit Tests
         run: |
           cd citrineos-core
