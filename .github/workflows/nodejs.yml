@@ -11,10 +11,10 @@ on:
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
-    runs-on: ubuntu-latest
     env:
       NODE_PROJECT_DIR: citrineos-core
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,12 +42,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd $NODE_PROJECT_DIR
+          cd ${{ env.NODE_PROJECT_DIR }}
           npm run install-all
 
       - name: Build
         run: |
-          cd $NODE_PROJECT_DIR
+          cd ${{ env.NODE_PROJECT_DIR }}
           npm run build
 
       - name: Upload Build Artifacts
