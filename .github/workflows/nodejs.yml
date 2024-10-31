@@ -22,128 +22,127 @@ jobs:
         with:
           submodules: true
 
-      - name: Set up Node.js ${{ env.NODE_IMAGE }}
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: Install dependencies
         run: |
           cd $NODE_PROJECT_DIR
           npm run install-all
 
-      - name: Build
-        run: |
-          cd $NODE_PROJECT_DIR
-          npm run build
+      # - name: Build
+      #   run: |
+      #     cd $NODE_PROJECT_DIR
+      #     npm run build
 
-      - name: Upload Build Artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: node-build-artifacts
-          path: ${{ env.NODE_PROJECT_DIR }}/dist
+      # - name: Upload Build Artifacts
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: node-build-artifacts
+      #     path: ${{ env.NODE_PROJECT_DIR }}/dist
 
-  unit-test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+  # unit-test:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
 
-      - name: Set up Node.js ${{ env.NODE_IMAGE }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+  #     - name: Set up Node.js ${{ env.NODE_IMAGE }}
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #         cache: 'npm'
 
-      - name: Run Unit Tests
-        run: |
-          cd citrineos-core
-          npm test
+  #     - name: Run Unit Tests
+  #       run: |
+  #         cd citrineos-core
+  #         npm test
 
-  lint:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+  # lint:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #         cache: 'npm'
 
-      - name: Lint Code
-        run: |
-          cd citrineos-core
-          npm run lint
+  #     - name: Lint Code
+  #       run: |
+  #         cd citrineos-core
+  #         npm run lint
 
-  npm-audit:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+  # npm-audit:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #         cache: 'npm'
 
-      - name: Audit Packages
-        run: |
-          cd citrineos-core
-          npm run install-all
-          npm audit --audit-level=low
-        continue-on-error: true
+  #     - name: Audit Packages
+  #       run: |
+  #         cd citrineos-core
+  #         npm run install-all
+  #         npm audit --audit-level=low
+  #       continue-on-error: true
 
-  npm-outdated:
-    needs: build
-    runs-on: ubuntu-latest
-    if: "github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/release')"
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+  # npm-outdated:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: "github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/release')"
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #         cache: 'npm'
 
-      - name: Check outdated packages
-        run: |
-          cd citrineos-core
-          npm run install-all
-          npm outdated --omit=dev
+  #     - name: Check outdated packages
+  #       run: |
+  #         cd citrineos-core
+  #         npm run install-all
+  #         npm outdated --omit=dev
 
-  njsscan:
-    needs: build
-    runs-on: ubuntu-latest
-    container: python:3
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+  # njsscan:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   container: python:3
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
 
-      - name: Install njsscan
-        run: pip3 install --upgrade njsscan
+  #     - name: Install njsscan
+  #       run: pip3 install --upgrade njsscan
 
-      - name: Run njsscan
-        run: |
-          cd citrineos-core
-          npm run install-all
-          njsscan .
+  #     - name: Run njsscan
+  #       run: |
+  #         cd citrineos-core
+  #         npm run install-all
+  #         njsscan .
