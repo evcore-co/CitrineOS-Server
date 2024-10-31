@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd $NODE_PROJECT_DIR
-          npm install
+          npm run install-all
 
       - name: Build
         run: |
@@ -102,6 +102,7 @@ jobs:
       - name: Audit Packages
         run: |
           cd citrineos-core
+          npm run install-all
           npm audit --audit-level=low
         continue-on-error: true
 
@@ -123,6 +124,7 @@ jobs:
       - name: Check outdated packages
         run: |
           cd citrineos-core
+          npm run install-all
           npm outdated --omit=dev
 
   njsscan:
@@ -140,4 +142,5 @@ jobs:
       - name: Run njsscan
         run: |
           cd citrineos-core
+          npm run install-all
           njsscan .
