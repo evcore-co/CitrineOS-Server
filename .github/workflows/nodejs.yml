@@ -127,7 +127,6 @@ jobs:
         continue-on-error: true
         run: npm run lint
 
-
   npm-audit:
     needs: build
     runs-on: ubuntu-latest
@@ -228,6 +227,7 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+
       - name: Install njsscan
         run: pip3 install --upgrade njsscan
 
@@ -238,4 +238,3 @@ jobs:
       - name: Run njsscan
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: njsscan .
-
