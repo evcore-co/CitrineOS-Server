@@ -1,8 +1,6 @@
 workflow:
   rules:
     # prevent branch pipeline when an MR is open (prefer MR pipeline)
-    - changes:
-      - citrineos-core/**/*
     - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
       when: never
     - if: '$CI_COMMIT_MESSAGE =~ "/\[(ci skip|skip ci) on ([^],]*,)*tag(,[^],]*)*\]/" && $CI_COMMIT_TAG'
@@ -23,6 +21,8 @@ workflow:
 
 .test-policy:
   rules:
+    - changes:
+      - citrineos-core/**/*
     # on tag: auto & failing
     - if: $CI_COMMIT_TAG
     # on ADAPTIVE_PIPELINE_DISABLED: auto & failing
