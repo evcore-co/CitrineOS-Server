@@ -21,8 +21,6 @@ workflow:
 
 .test-policy:
   rules:
-    - changes:
-      - citrineos-core/**/*
     # on tag: auto & failing
     - if: $CI_COMMIT_TAG
     # on ADAPTIVE_PIPELINE_DISABLED: auto & failing
@@ -95,6 +93,8 @@ Node.js build:
     expire_in: 1 day
   extends: .nodejs-base
   rules:
+    - changes:
+      - citrineos-core/**/*
     - !reference [.test-policy, rules]
   script:
     - npm run build
@@ -103,6 +103,8 @@ Node.js build:
 Node.js Unit Testing:
   extends: .nodejs-base
   rules:
+    - changes:
+      - citrineos-core/**/*
     - !reference [.test-policy, rules]
   script:
     - npm run build
