@@ -71,7 +71,7 @@ jobs:
   unit-test:
     needs: [build ]
     runs-on: ubuntu-latest
-    if: needs.steps.update-citrineos-dir.outputs.any_changed == 'true'
+    if: needs.steps.changed-files.outputs.any_changed == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
