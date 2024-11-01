@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.changed-files.outputs.any_changed }}
+      changed: ${{ steps.detect-changes-citrineos.outputs.any_changed }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -102,6 +102,8 @@ jobs:
         continue-on-error: true
 
   lint:
+    needs: [ build ]
+    if: needs.build.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
