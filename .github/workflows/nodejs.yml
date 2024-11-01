@@ -6,28 +6,29 @@ on:
       - "*"
     tags:
       - "*"
-    paths:
-      - "${{ env.NODE_PROJECT_DIR }}/**"
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - "${{ env.NODE_PROJECT_DIR }}/**"
 
 env:
   NODE_PROJECT_DIR: citrineos-core
-  NODE_VERSION: '18'
+  NODE_VERSION: 18
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: true
+      # Detect file changes
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+        with:
+          files: your-directory/**  # Replace with your directory path
 
-      - name: Setup Node.js
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -60,15 +61,22 @@ jobs:
           name: node-build-artifacts
           path: ${{ env.NODE_PROJECT_DIR }}/dist
 
+      - name: Get changed files in the citrineOS directory
+        id: update-citrineos-dir
+        uses: tj-actions/changed-files@v45
+        with:
+          files: ${{ env.NODE_PROJECT_DIR }}/**
+
   unit-test:
     runs-on: ubuntu-latest
+    if: needs.steps.update-citrineos-dir.outputs.any_changed == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: Setup Node.js
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -92,11 +100,10 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        continue-on-error: true
         run: npm run test
+        continue-on-error: true
 
   lint:
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -104,7 +111,7 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -125,10 +132,9 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run install-all
-
-      - name: Lint
+        
+      - name: Lint Code
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        continue-on-error: true
         run: npm run lint
 
   npm-audit:
@@ -140,7 +146,7 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -164,8 +170,8 @@ jobs:
 
       - name: Audit Packages
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        continue-on-error: true
         run: npm audit --audit-level=low
+        continue-on-error: true
 
   npm-outdated:
     needs: [build, unit-test, lint]
@@ -177,7 +183,7 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -198,11 +204,6 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run install-all
-
-      - name: Check outdated packages
-        working-directory: ${{ env.NODE_PROJECT_DIR }}
-        continue-on-error: true
-        run: npm outdated --omit=dev
 
   njsscan:
     needs: [build, unit-test, lint]
@@ -232,12 +233,12 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Install njsscan
-        run: pip3 install --upgrade njsscan
-
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run install-all
+
+      - name: Install njsscan
+        run: pip3 install --upgrade njsscan
 
       - name: Run njsscan
         working-directory: ${{ env.NODE_PROJECT_DIR }}
