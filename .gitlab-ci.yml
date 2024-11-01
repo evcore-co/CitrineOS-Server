@@ -3,7 +3,7 @@ include:
   - local: .gitlab/ci/node.gitlab-ci.yml
     rules:
       - changes:
-        - .gitlab/**/*
+        - citrineos-core/**/*
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -21,3 +21,7 @@ stages:
 - publish
 - infra-prod
 - production
+
+test:
+  stage: build
+  script: echo "Running tests"
