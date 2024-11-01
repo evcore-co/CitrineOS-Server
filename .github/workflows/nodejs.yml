@@ -32,7 +32,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [ changes-citrineos ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -63,9 +62,7 @@ jobs:
 
       - name: Build
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        run: |
-          echo ${{ needs.changes-citrineos.outputs.changed }}
-          npm run build
+        run: npm run build
 
       - name: Upload Build Artifacts
         if: always()
