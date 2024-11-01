@@ -28,34 +28,32 @@ help:
 
 default: server
 
-.PHONY: bootstrap
 bootstrap: ## is used solely for fulfilling dependencies of the project
 	@./scripts.d/bootstrap.sh
 
-.PHONY: setup
 setup: bootstrap ## is used to set up a project in an initial state
-	@echo "is used to set up a project in an initial state"
+	@./scripts.d/setup.sh
 
-.PHONY: update
 update: ## is used to update the project after a fresh pull
 	@echo "is used to update the project after a fresh pull"
 
-.PHONY: server
 server: setup ## is used to start the application
-	@echo "is used to start the application"
+	@./scripts.d/server.sh
 
-.PHONY: test
+server-no-docker: setup ## is used to start the application
+	@./scripts.d/server-no-docker.sh
+
+down: ## is used to run the test suite of the application
+	@echo "is used to run the test suite of the application"
+
 test: ## is used to run the test suite of the application
 	@echo "is used to run the test suite of the application"
 
-.PHONY: cibuild
 cibuild: ## is used for your continuous integration server
 	@echo "is used for your continuous integration server"
 
-.PHONY: console
 console: ## is used to open a console for your application
 	@echo "is used to open a console for your application"
 
-.PHONY: clean
 clean: ## is used to reset the infrastructure o an inditial state
 	@echo "is used to reset the infrastructure o an inditial state"

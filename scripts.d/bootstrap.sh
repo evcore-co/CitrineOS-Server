@@ -19,4 +19,3 @@ if ! command -v terraspace &> /dev/null; then
   echo "https://terraspace.cloud"
   exit 0
 fi
-
