@@ -87,7 +87,7 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        run: npm test
+        run: npm run test
 
   lint:
     needs: build
