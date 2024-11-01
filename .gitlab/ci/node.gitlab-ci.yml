@@ -40,7 +40,7 @@ workflow:
 .updates-citrineOS:
   rules:
     - changes:
-      - .gitlab/**/*
+      - $CI_PROJECT_DIR/$NODE_PROJECT_DIR/**/*
 
 variables:
   # nodejs-base
