@@ -69,9 +69,9 @@ jobs:
 
   unit-test:
     runs-on: ubuntu-latest
+    if: steps.update-citrineos-dir.outputs.any_changed == 'true'
     steps:
       - name: Checkout code
-        if: steps.update-citrineos-dir.outputs.any_changed == 'true'
         uses: actions/checkout@v4
         with:
           submodules: true
