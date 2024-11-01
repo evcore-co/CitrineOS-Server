@@ -37,11 +37,6 @@ workflow:
     # else (Ready MR): auto & failing
     - when: on_success
 
-.updates-citrineOS:
-  rules:
-    - changes:
-      - $CI_PROJECT_DIR/$NODE_PROJECT_DIR/**/*
-
 variables:
   # nodejs-base
   NODE_IMAGE: node:18
@@ -84,7 +79,7 @@ stages:
   image: $NODE_IMAGE
   variables:
     # NPM cache
-    npm_config_cache: "$CI_PROJECT_DIR/$NODE_PROJECT_DIR/.npm"
+    npm_config_cache: "citrineos-core/.npm"
 
 ########################################################################################################################
 # Build Stage Definition: Build (when applicable), unit test (with code coverage), and package the code
@@ -107,7 +102,8 @@ Node.js Unit Testing:
   extends: .nodejs-base
   rules:
     - !reference [.test-policy, rules]
-    - !reference [.updates-citrineOS, rules]
+    - changes:
+      - citrineos-core/**/*
   script:
     - npm run build
   stage: build
@@ -116,7 +112,8 @@ Node.js lint:
   extends: .nodejs-base
   rules:
     - !reference [.test-policy, rules]
-    - !reference [.updates-citrineOS, rules]
+    - changes:
+      - citrineos-core/**/*
   script:
     - npm run lint
   stage: build
@@ -129,7 +126,8 @@ npm audit:
   extends: .nodejs-base
   rules:
     - !reference [.test-policy, rules]
-    - !reference [.updates-citrineOS, rules]
+    - changes:
+      - citrineos-core/**/*
   script:
     - npm audit --audit-level=low
   stage: test
@@ -158,7 +156,8 @@ njsscan:
   image: python
   rules:
     - !reference [.test-policy, rules]
-    - !reference [.updates-citrineOS, rules]
+    - changes:
+      - citrineos-core/**/*
   script:
     - njsscan .
   stage: test
