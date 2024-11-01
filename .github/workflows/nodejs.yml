@@ -28,7 +28,7 @@ jobs:
         id: detect-changes-citrineos
         uses: tj-actions/changed-files@v45
         with:
-          files: ${{ env.NODE_PROJECT_DIR }}/**
+          files: .github/**
 
   build:
     runs-on: ubuntu-latest
