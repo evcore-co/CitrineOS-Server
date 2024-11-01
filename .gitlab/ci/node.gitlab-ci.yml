@@ -92,8 +92,6 @@ Node.js build:
       - $NODE_PROJECT_DIR/$NODE_BUILD_DIR
     expire_in: 1 day
   extends: .nodejs-base
-  rules:
-    - !reference [.test-policy, rules]
   script:
     - npm run build
   stage: build
