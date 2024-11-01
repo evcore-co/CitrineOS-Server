@@ -1,4 +1,4 @@
-name: Node.js CI/CD Pipeline
+name: Citrine Node.js CI/CD Pipeline
 
 on:
   push:
