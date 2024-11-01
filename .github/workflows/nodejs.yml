@@ -14,21 +14,24 @@ env:
   NODE_VERSION: 18
 
 jobs:
-  build:
+  changes-citrineos:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.detect-changes-citrineos.outputs.any_changed }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-
       - name: Detect change in CitrineOS dir
         id: detect-changes-citrineos
         uses: tj-actions/changed-files@v42
         with:
           files: ${{ env.NODE_PROJECT_DIR }}/**
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
@@ -64,8 +67,8 @@ jobs:
           path: ${{ env.NODE_PROJECT_DIR }}/dist
 
   unit-test:
-    needs: [ build ]
-    if: needs.build.outputs.changed == 'true'
+    needs: [ changes-citrineos ]
+    if: needs.changes-citrineos.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -97,13 +100,12 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npm run test
         continue-on-error: true
 
   lint:
-    needs: [ build ]
-    if: needs.build.outputs.changed == 'true'
+    needs: [ changes-citrineos ]
+    if: needs.changes-citrineos.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
