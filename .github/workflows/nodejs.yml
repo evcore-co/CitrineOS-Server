@@ -68,6 +68,7 @@ jobs:
           files: ${{ env.NODE_PROJECT_DIR }}/**
 
   unit-test:
+    needs: [build]
     runs-on: ubuntu-latest
     if: needs.steps.update-citrineos-dir.outputs.any_changed == 'true'
     steps:
