@@ -20,5 +20,3 @@ if ! command -v terraspace &> /dev/null; then
   exit 0
 fi
 
-cd $ROOT/citrineos-core
-git clean -xfd
