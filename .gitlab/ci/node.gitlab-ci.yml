@@ -99,8 +99,6 @@ Node.js build:
   extends: .nodejs-base
   rules:
     - !reference [.test-policy, rules]
-    # - !reference [.updates-citrineOS, rules]
-
   script:
     - npm run build
   stage: build
