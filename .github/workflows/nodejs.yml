@@ -68,6 +68,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.NODE_PROJECT_DIR }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run install-all
@@ -91,6 +104,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.NODE_PROJECT_DIR }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
@@ -116,6 +142,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.NODE_PROJECT_DIR }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run install-all
@@ -123,9 +162,7 @@ jobs:
       - name: Audit Packages
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         continue-on-error: true
-        run: |
-          npm run install-all
-          npm audit --audit-level=low
+        run: npm audit --audit-level=low
 
   npm-outdated:
     needs: build
@@ -142,6 +179,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.NODE_PROJECT_DIR }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run install-all
@@ -149,9 +199,7 @@ jobs:
       - name: Check outdated packages
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         continue-on-error: true
-        run: |
-          npm run install-all
-          npm outdated --omit=dev
+        run: npm outdated --omit=dev
 
   njsscan:
     needs: build
@@ -168,13 +216,26 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.NODE_PROJECT_DIR }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Install njsscan
         run: pip3 install --upgrade njsscan
 
+      - name: Install dependencies
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        run: npm run install-all
+
       - name: Run njsscan
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        run: |
-          cd citrineos-core
-          npm run install-all
-          njsscan .
+        run: njsscan .
 
