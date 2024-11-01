@@ -26,7 +26,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v42
         with:
-          files: ${{ env.NODE_PROJECT_DIR }}/**  # Replace with your directory path
+          files: .github/**  # Replace with your directory path
 
       - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
