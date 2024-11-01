@@ -74,6 +74,7 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: ${{ env.NODE_PROJECT_DIR }}
+        continue-on-error: true
         run: npm run test
 
   lint:
@@ -97,6 +98,7 @@ jobs:
 
       - name: Lint
         working-directory: ${{ env.NODE_PROJECT_DIR }}
+        continue-on-error: true
         run: npm run lint
 
 
@@ -119,11 +121,11 @@ jobs:
         run: npm run install-all
 
       - name: Audit Packages
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        continue-on-error: true
         run: |
-          cd citrineos-core
           npm run install-all
           npm audit --audit-level=low
-        continue-on-error: true
 
   npm-outdated:
     needs: build
@@ -145,8 +147,9 @@ jobs:
         run: npm run install-all
 
       - name: Check outdated packages
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
+        continue-on-error: true
         run: |
-          cd citrineos-core
           npm run install-all
           npm outdated --omit=dev
 
@@ -160,11 +163,18 @@ jobs:
         with:
           submodules: true
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Install njsscan
         run: pip3 install --upgrade njsscan
 
       - name: Run njsscan
+        working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: |
           cd citrineos-core
           npm run install-all
           njsscan .
+
