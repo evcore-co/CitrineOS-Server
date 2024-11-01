@@ -2,10 +2,16 @@ name: Node.js CI/CD Pipeline
 
 on:
   push:
-    branches: ["*"]
-    tags: ["*"]
+    branches:
+      - "*"
+    tags:
+      - "*"
+    paths:
+      - "${{ env.NODE_PROJECT_DIR }}/**"
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - "${{ env.NODE_PROJECT_DIR }}/**"
 
 env:
   NODE_PROJECT_DIR: citrineos-core
