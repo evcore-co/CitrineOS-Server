@@ -3,7 +3,7 @@ include:
   - local: .gitlab/ci/node.gitlab-ci.yml
     rules:
       - changes:
-        - citrineos-core/**/*
+        - .gitlab/**/*
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
