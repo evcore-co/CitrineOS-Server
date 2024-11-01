@@ -69,7 +69,6 @@ jobs:
 
   unit-test:
     runs-on: ubuntu-latest
-    if: steps.update-citrineos-dir.outputs.any_changed == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -96,7 +95,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: ${{ env.NODE_PROJECT_DIR }}
-        run: npm run install-all
+        run: |
+          echo ${{ needs.steps.update-citrineos-dir.outputs.any_changed }}
+          npm run install-all
 
       - name: Run Unit Tests
         working-directory: ${{ env.NODE_PROJECT_DIR }}
