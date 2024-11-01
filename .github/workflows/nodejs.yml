@@ -51,7 +51,7 @@ jobs:
         run: npm run install-all
 
       - name: Build
-        if: steps.update-citrineos-dir.outputs.any_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run build
 
