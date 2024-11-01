@@ -26,7 +26,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v42
         with:
-          files: .github/workflow/**  # Replace with your directory path
+          files: .github/**  # Replace with your directory path
 
       - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
@@ -51,6 +51,7 @@ jobs:
         run: npm run install-all
 
       - name: Build
+        if: steps.update-citrineos-dir.outputs.any_changed == 'true'
         working-directory: ${{ env.NODE_PROJECT_DIR }}
         run: npm run build
 
@@ -68,7 +69,7 @@ jobs:
           files: ${{ env.NODE_PROJECT_DIR }}/**
 
   unit-test:
-    needs: [build]
+    needs: [build ]
     runs-on: ubuntu-latest
     if: needs.steps.update-citrineos-dir.outputs.any_changed == 'true'
     steps:
