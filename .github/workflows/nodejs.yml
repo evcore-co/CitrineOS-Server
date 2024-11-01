@@ -7,11 +7,11 @@ on:
     tags:
       - "*"
     paths:
-      - "${{ env.NODE_PROJECT_DIR }}/**"
+      - "citrineos-core/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - "${{ env.NODE_PROJECT_DIR }}/**"
+      - "citrineos-core/**"
 
 env:
   NODE_PROJECT_DIR: citrineos-core
