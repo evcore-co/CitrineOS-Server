@@ -19,6 +19,11 @@ jobs:
     outputs:
       changed: ${{ steps.detect-changes-citrineos.outputs.any_changed }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
       - name: Detect change in CitrineOS dir
         id: detect-changes-citrineos
         uses: tj-actions/changed-files@v42
