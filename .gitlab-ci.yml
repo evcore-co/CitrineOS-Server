@@ -1,9 +1,9 @@
 include:
   - component: $CI_SERVER_FQDN/base-ci-components/base/gitlab-ci-base@main
   - local: .gitlab/ci/citrine-*.gitlab-ci.yml
-    rules:
-      - changes:
-        - citrineos-core/**/*
+    # rules:
+    #   - changes:
+    #     - citrineos-core/**/*
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
