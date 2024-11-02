@@ -44,7 +44,7 @@ server-no-docker: setup ## is used to start the application
 	@./scripts.d/server-no-docker.sh
 
 down: ## is used to run the test suite of the application
-	@echo "is used to run the test suite of the application"
+	@./scripts.d/compose-down.sh
 
 test: ## is used to run the test suite of the application
 	@echo "is used to run the test suite of the application"
