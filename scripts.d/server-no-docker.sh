@@ -16,7 +16,7 @@ npm run start
 
 # if [ -z "$STATUS" ]; then
 #   echo "No containers are running."
-#   docker compose -f ./docker-compose.yml up -
+#   docker compose -f ./docker-compose.yml up -d
 # else
 #   echo "The following containers are up and running:"
 #   echo "$STATUS"

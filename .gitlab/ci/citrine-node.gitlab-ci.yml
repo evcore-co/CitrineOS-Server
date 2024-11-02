@@ -93,7 +93,7 @@ Node.js build:
     expire_in: 1 day
   extends: .nodejs-base
   rules:
-    - !reference [.test-policy, rules]
+    !reference [.test-policy, rules]
   script:
     - npm run build
   stage: build
@@ -101,7 +101,7 @@ Node.js build:
 Node.js Unit Testing:
   extends: .nodejs-base
   rules:
-    - !reference [.test-policy, rules]
+    !reference [.test-policy, rules]
   script:
     - npm run build
   stage: build
@@ -109,7 +109,7 @@ Node.js Unit Testing:
 Node.js lint:
   extends: .nodejs-base
   rules:
-    - !reference [.test-policy, rules]
+    !reference [.test-policy, rules]
   script:
     - npm run lint
   stage: build
@@ -121,7 +121,7 @@ npm audit:
   allow_failure: true
   extends: .nodejs-base
   rules:
-    - !reference [.test-policy, rules]
+    !reference [.test-policy, rules]
   script:
     - npm audit --audit-level=low
   stage: test
@@ -149,7 +149,8 @@ njsscan:
     - cd ${NODE_PROJECT_DIR}
   image: python
   rules:
-    - !reference [.test-policy, rules]
+    !reference [.test-policy, rules]
   script:
     - njsscan .
   stage: test
+g

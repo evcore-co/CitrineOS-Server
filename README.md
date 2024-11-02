@@ -1,1 +1,4 @@
 # CitrineOS-server
+
+
+make server
