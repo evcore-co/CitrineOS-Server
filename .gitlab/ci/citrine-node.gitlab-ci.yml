@@ -153,4 +153,3 @@ njsscan:
   script:
     - njsscan .
   stage: test
-g
