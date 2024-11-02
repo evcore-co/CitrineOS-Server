@@ -1,16 +1,22 @@
 include:
   - component: $CI_SERVER_FQDN/base-ci-components/base/gitlab-ci-base@main
-  - local: .gitlab/ci/citrine-*.gitlab-ci.yml
-    rules:
-      - changes:
-        - citrineos-core/**/*
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   PROD_REF: /^(release)/
   INTEG_REF: /^(main|development)$/
 
+citrineos-core:
+  needs: []
+  stage: projects
+  trigger:
+    include: .gitlab/ci/citrine-*.gitlab-ci.yml
+  rules:
+    - changes:
+      - citrineos-core/**/*
+
 stages:
+- base # just for monorepo aproach
 - build
 - test
 - package-build
