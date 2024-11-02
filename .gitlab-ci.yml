@@ -11,9 +11,9 @@ citrineos-core:
   stage: base
   trigger:
     include: .gitlab/ci/citrine-*.gitlab-ci.yml
-  rules:
-    - changes:
-      - citrineos-core/**/*
+  # rules:
+  #   - changes:
+  #     - citrineos-core/**/*
 
 stages:
 - base # just for monorepo aproach
