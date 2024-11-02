@@ -37,23 +37,20 @@ setup: bootstrap ## is used to set up a project in an initial state
 update: ## is used to update the project after a fresh pull
 	@echo "is used to update the project after a fresh pull"
 
-server: setup ## is used to start the application
+up: setup ## is used to start the application
 	@./scripts.d/server.sh
 
-server-no-docker: setup ## is used to start the application
+up-no-docker: setup ## is used to start the application
 	@./scripts.d/server-no-docker.sh
 
 down: ## is used to run the test suite of the application
 	@./scripts.d/compose-down.sh
 
-test: ## is used to run the test suite of the application
-	@echo "is used to run the test suite of the application"
+swarn: ## is used to run the test suite of the application
+	@./scripts.d/swarn-up.sh
 
-cibuild: ## is used for your continuous integration server
-	@echo "is used for your continuous integration server"
-
-console: ## is used to open a console for your application
-	@echo "is used to open a console for your application"
+swarn-down: ## is used for your continuous integration server
+	@docker stack rm citrineos
 
 clean: ## is used to reset the infrastructure o an inditial state
 	@echo "is used to reset the infrastructure o an inditial state"
