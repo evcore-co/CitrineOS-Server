@@ -1,6 +1,6 @@
 include:
   - component: $CI_SERVER_FQDN/base-ci-components/base/gitlab-ci-base@main
-  - local: .gitlab/ci/node.gitlab-ci.yml
+  - local: .gitlab/ci/citrine-node.gitlab-ci.yml
     # rules:
     #   - changes:
     #     - citrineos-core/**/*
